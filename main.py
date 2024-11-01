@@ -24,27 +24,38 @@ logger = logging.getLogger(__name__)
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Define the FAQ dictionary
+FAQ = {
+    "how to register an account?": "To register an account, please go to the registration page and fill out the form.",
+    "how to track my order?": "You can track your order by logging into your account and navigating to the 'My Orders' section.",
+    "what is your return policy?": "Our return policy allows returns within 30 days of purchase with a valid receipt.",
+    "how to contact support?": "You can contact support by emailing support@yourcompany.com or calling 1-800-123-4567.",
+    "what payment methods do you accept?": "We accept Visa, MasterCard, American Express, and PayPal.",
+    "how do i reset my password?": "To reset your password, click on 'Forgot Password' on the login page and follow the instructions.",
+    # Add more as needed
+}
+
 # Pydantic model for incoming messages
 class Message(BaseModel):
     message: str
 
-# Function to fetch response from the chosen OpenAI model
 def get_llm_response(user_message: str) -> str:
     """
-    Fetch response from the chosen OpenAI model.
+    Fetch response from the LLM model or return FAQ answer if available.
     """
     if not user_message.strip():
         logger.warning("Received empty message.")
         return "Please enter a valid message."
 
-    # Simple keyword-based responses for Help/FAQ redirection
-    if "help" in user_message.lower() or "faq" in user_message.lower():
-        return (
-            "Sure! Please visit our [Help Page](http://yourdomain.com/help) "
-            "or check out our [FAQ](http://yourdomain.com/faq) for more information."
-        )
+    # Normalize the user message
+    normalized_message = user_message.strip().lower()
+    
+    # Check if the normalized message is in FAQ
+    if normalized_message in FAQ:
+        logger.info(f"FAQ matched for message: {user_message}")
+        return FAQ[normalized_message]
 
-    # Integrate with the chosen OpenAI model (e.g., "gpt-4o-mini")
+    # If not an FAQ, fetch response from the OpenAI model
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         logger.error("OPENAI_API_KEY not found in environment variables.")
@@ -55,7 +66,7 @@ def get_llm_response(user_message: str) -> str:
         "Authorization": f"Bearer {api_key}"
     }
     data = {
-        "model": "gpt-4o-mini",  # Define openai model 
+        "model": "gpt-4o-mini",  # Chose the model here
         "messages": [{"role": "user", "content": user_message}]
     }
     try:
