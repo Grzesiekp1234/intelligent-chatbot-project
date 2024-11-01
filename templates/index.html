@@ -1,0 +1,80 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Chatbot</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- Include Marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Include DOMPurify for sanitizing HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.10/dist/purify.min.js"></script>
+</head>
+
+<body>
+    <div id="chat-container">
+        <h2>Customer Support Chatbot</h2>
+        <div id="messages"></div>
+        <form id="input-form">
+            <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off" required />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('input-form');
+        const input = document.getElementById('user-input');
+        const messages = document.getElementById('messages');
+
+        // Function to append messages to the chat
+        function appendMessage(sender, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            // Use Marked.js to parse Markdown to HTML
+            const parsedContent = marked.parse(text);
+            // Sanitize the HTML to prevent XSS
+            const sanitizedContent = DOMPurify.sanitize(parsedContent);
+            messageDiv.innerHTML = `
+                <span class="sender">${sender === 'user' ? 'You' : 'Bot'}:</span>
+                <div class="content">${sanitizedContent}</div>
+            `;
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userMessage = input.value.trim();
+            if (!userMessage) return;
+
+            appendMessage('user', userMessage);
+            input.value = '';
+
+            try {
+                const response = await fetch('/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: userMessage })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                appendMessage('bot', data.response);
+            } catch (error) {
+                console.error('Error:', error);
+                appendMessage('bot', 'Sorry, there was an error processing your request.');
+            }
+        });
+    </script>
+</body>
+
+</html>
