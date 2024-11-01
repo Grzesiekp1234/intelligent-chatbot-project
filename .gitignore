@@ -1,0 +1,21 @@
+# Virtual environment
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Environment variables
+.env
+
+# Git directories
+.git/
+
+# IDE configurations
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
