@@ -2,86 +2,126 @@
 
 ## Project Description
 
-This project is an **Intelligent Customer Support Chatbot** designed to assist users by answering frequently asked questions (FAQs), tracking orders, handling user authentication, and providing advanced natural language responses using OpenAI's GPT-4. Built with FastAPI for a robust backend, containerized with Docker, and deployed on Microsoft Azure App Service, the chatbot leverages CI/CD pipelines via GitHub Actions to ensure seamless integration and deployment.
+The **Intelligent Customer Support Chatbot** is a robust and scalable solution designed to assist users by answering frequently asked questions (FAQs) and providing advanced natural language responses using OpenAI's GPT-4o-mini model. Built with **FastAPI** for a high-performance backend and a responsive frontend interface, the chatbot is containerized with **Docker**, ensuring consistency across different environments and simplifying deployment.
 
 ## Features
 
-- **FAQ Handling:** Provides quick responses to common customer inquiries.
-- **Order Tracking:** Allows users to track the status of their orders in real-time.
-- **User Authentication:** Secure login system to manage user sessions and data.
-- **Natural Language Processing:** Utilizes OpenAI GPT-4 for generating human-like responses.
-- **Automated Testing:** Comprehensive test suites using `pytest` to ensure reliability.
-- **Containerization:** Dockerized application for consistent environments across development and production.
-- **CI/CD Pipeline:** Automated testing and deployment workflows with GitHub Actions.
-- **Monitoring & Logging:** Integrated with Azure Application Insights for real-time monitoring and detailed logging.
+- **FAQ Handling:**
+  - Provides quick responses to common customer inquiries using a predefined FAQ system.
+  - Reduces reliance on the OpenAI model for repetitive questions, enhancing efficiency and reducing costs.
+
+- **Natural Language Processing:**
+  - Utilizes OpenAI GPT-4o-mini for generating human-like responses to complex queries.
+
+- **Normalized FAQ Responses:**
+  - Implements a normalized FAQ system to handle user queries consistently, regardless of input variations.
+
+- **Automated Testing:**
+  - Comprehensive test suites using `pytest` ensure reliability and correctness of chatbot functionalities.
+  - Tests cover FAQ responses, OpenAI model integrations, and edge cases.
+
+- **Responsive Design:**
+  - Frontend interface adapts seamlessly to various screen sizes and devices, including desktops, tablets, and mobile phones.
+
+- **Formatted Responses:**
+  - Parses and renders Markdown in chatbot responses for enhanced readability, including bold text, lists, and links.
+
+- **Auto-Scrolling:**
+  - Automatically scrolls to the latest message for a smooth and uninterrupted user experience.
+
+- **Containerization:**
+  - Dockerized application ensures consistent environments across development and production.
+  - Simplifies deployment and scalability.
 
 ## Technologies Used
 
 - **Programming Language:** Python
 - **Framework:** FastAPI
-- **LLM Model:** OpenAI GPT-4
-- **Containerization:** Docker
-- **CI/CD:** GitHub Actions
-- **Cloud Platform:** Microsoft Azure App Service
-- **Testing:** pytest
+- **LLM Model:** OpenAI GPT-4o-mini
+- **Frontend:** HTML, CSS, JavaScript, Marked.js, DOMPurify
+- **Containerization:** Docker, Docker Compose
+- **Testing:** pytest, httpx
 - **Version Control:** Git & GitHub
-- **Monitoring:** Azure Application Insights
 
 ## Installation
 
 ### Prerequisites
 
-- Python 3.8 or newer
-- Git
-- Docker
-- Azure Account
+- **Python:** Version 3.8 or newer
+- **Git:** For version control
+- **Docker:** For containerization
+- **Docker Compose:** (Optional) For managing multi-container setups
 
 ### Steps
 
 1. **Clone the Repository:**
+
     ```bash
     git clone https://github.com/YOUR_USERNAME/intelligent-chatbot.git
     cd intelligent-chatbot
     ```
 
 2. **Create a Virtual Environment:**
+
     ```bash
     python -m venv venv
-    # Activate the virtual environment:
-    # On Windows:
-    venv\Scripts\activate
-    # On macOS/Linux:
-    source venv/bin/activate
     ```
 
+    - **Activate the Virtual Environment:**
+      - **Windows:**
+        ```bash
+        venv\Scripts\activate
+        ```
+      - **macOS/Linux:**
+        ```bash
+        source venv/bin/activate
+        ```
+
 3. **Install Dependencies:**
+
     ```bash
+    pip install --upgrade pip
     pip install -r requirements.txt
     ```
 
 4. **Set Up Environment Variables:**
-    - Create a `.env` file in the project root:
-      ```plaintext
-      OPENAI_API_KEY=your_openai_api_key_here
-      SECRET_KEY=your_secret_key_here
-      APPLICATIONINSIGHTS_CONNECTION_STRING=your_connection_string_here
-      ```
+
+    - **Create a `.env` File:**
+
+        ```bash
+        cp .env.example .env
+        ```
+
+    - **Edit the `.env` File:**
+
+        Open the `.env` file in your preferred text editor and fill in the required environment variables:
+
+        ```env
+        OPENAI_API_KEY=your_openai_api_key_here
+        SECRET_KEY=your_secret_key_here  # Optional
+        APPLICATIONINSIGHTS_CONNECTION_STRING=your_connection_string_here  # Optional, for monitoring
+        ```
+
+    **Important:** Ensure that the `.env` file is **not** committed to version control to protect sensitive information. The `.gitignore` is configured to exclude it.
 
 5. **Run the Application Locally:**
+
     ```bash
     uvicorn main:app --reload
     ```
-    - Access the chatbot at [http://localhost:8000/](http://localhost:8000/)
-    - Access Swagger UI at [http://localhost:8000/docs](http://localhost:8000/docs)
 
-## Usage
+    - **Access the Chatbot Interface:**
+      - Navigate to [http://localhost:8000/](http://localhost:8000/) in your web browser.
+    - **Access Swagger UI:**
+      - Navigate to [http://localhost:8000/docs](http://localhost:8000/docs) to view and interact with the API documentation.
 
-### Register a User
+## Docker Setup
 
-- **Current Users:**
-  - Username: `john`
-  - Password: `secret`
+Containerizing your application ensures consistency across different environments and simplifies deployment.
 
-- **Obtain a Token:**
-  ```bash
-  curl -X POST "http://localhost:8000/token" -d "username=john&password=secret"
+### 1. **Build the Docker Image**
+
+Navigate to the project root directory and build the Docker image:
+
+```bash
+docker build -t intelligent-chatbot:latest .
